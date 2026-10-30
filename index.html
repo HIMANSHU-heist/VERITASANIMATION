@@ -242,7 +242,8 @@ const N=STEPS.length,DUR=9.5,now=()=>performance.now()/1000;
 /* ===== VOICEOVER: narration.mp3 (3:59) - slide start times in seconds. Adjust here if a slide feels early/late. ===== */
 const TS=[0,20.83,49.66,74.47,99.02,121.03,140.55,169.69,195.06,215.83],LEAD=0.25,vo=document.getElementById("vo");
 let audioBad=false,lockUntil=0,playTok=0,fbT=null;
-const audioReady=fetch("narration.mp3").then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{vo.src=URL.createObjectURL(b)}).catch(()=>{vo.src="narration.mp3"});
+const AUDIO_URLS=["narration.mp3","https://cdn.jsdelivr.net/gh/HIMANSHU-heist/VERITASANIMATION@main/narration.mp3","https://raw.githubusercontent.com/HIMANSHU-heist/VERITASANIMATION/main/narration.mp3"];
+const audioReady=(async()=>{for(const u of AUDIO_URLS){try{const r=await fetch(u);if(!r.ok)continue;const b=await r.blob();vo.src=URL.createObjectURL(new Blob([b],{type:"audio/mpeg"}));return}catch(e){}}audioBad=true})();
 vo.addEventListener("error",()=>{if(vo.error&&vo.error.code===4)audioBad=true});
 const stepAt=t=>{let i=0;for(let k=0;k<TS.length;k++)if(t>=TS[k]-LEAD)i=k;return i};
 const segEnd=i=>i<N-1?TS[i+1]-LEAD:1e9;
